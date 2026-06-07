@@ -1,0 +1,158 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+:root {
+  --primary: #6C63FF;
+  --primary-light: #8B85FF;
+  --primary-dark: #5A52E0;
+  --secondary: #FF6584;
+  --success: #43D9AD;
+  --warning: #FFB648;
+  --purple: #A78BFA;
+  --blue: #38BDF8;
+  --orange: #FB923C;
+
+  --bg: #0F0F1A;
+  --surface: #1A1A2E;
+  --surface-2: #1E1E35;
+  --surface-3: #252540;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-active: rgba(108, 99, 255, 0.4);
+  --text: #E8E8F0;
+  --text-muted: #8888AA;
+  --text-dim: #5A5A7A;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--surface); }
+::-webkit-scrollbar-thumb { background: var(--surface-3); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+/* FullCalendar overrides */
+.fc {
+  font-family: 'Inter', sans-serif !important;
+}
+.fc-theme-standard td,
+.fc-theme-standard th {
+  border-color: var(--border) !important;
+}
+.fc-theme-standard .fc-scrollgrid {
+  border-color: var(--border) !important;
+}
+.fc .fc-daygrid-day.fc-day-today {
+  background: rgba(108, 99, 255, 0.08) !important;
+}
+.fc .fc-col-header-cell-cushion,
+.fc .fc-daygrid-day-number,
+.fc .fc-timegrid-slot-label-cushion,
+.fc .fc-list-event-title a {
+  color: var(--text) !important;
+  text-decoration: none;
+}
+.fc .fc-button {
+  background: var(--surface-3) !important;
+  border-color: var(--border) !important;
+  color: var(--text) !important;
+  font-size: 0.8rem !important;
+  border-radius: 8px !important;
+  padding: 6px 14px !important;
+  font-weight: 500 !important;
+  transition: all 0.2s !important;
+}
+.fc .fc-button:hover {
+  background: var(--primary) !important;
+  border-color: var(--primary) !important;
+}
+.fc .fc-button-active,
+.fc .fc-button-primary:not(:disabled).fc-button-active {
+  background: var(--primary) !important;
+  border-color: var(--primary) !important;
+}
+.fc .fc-toolbar-title {
+  font-size: 1.1rem !important;
+  font-weight: 700 !important;
+  color: var(--text) !important;
+}
+.fc .fc-event {
+  border-radius: 6px !important;
+  border: none !important;
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+  padding: 2px 6px !important;
+  cursor: pointer !important;
+  transition: opacity 0.2s !important;
+}
+.fc .fc-event:hover { opacity: 0.85 !important; }
+.fc .fc-event-title { font-weight: 500 !important; }
+.fc .fc-list-event:hover td { background: var(--surface-2) !important; }
+.fc .fc-list-day-cushion { background: var(--surface) !important; }
+.fc .fc-non-business { background: rgba(255,255,255,0.015) !important; }
+.fc .fc-timegrid-col.fc-day-today { background: rgba(108, 99, 255, 0.04) !important; }
+.fc .fc-daygrid-day-frame { min-height: 80px; }
+.fc-direction-ltr .fc-daygrid-event.fc-event-end { margin-right: 4px; }
+.fc-direction-ltr .fc-daygrid-event.fc-event-start { margin-left: 4px; }
+
+/* Glass card utility */
+.glass-card {
+  background: rgba(26, 26, 46, 0.8);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Pulse animation for live indicators */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+.pulse { animation: pulse 2s ease-in-out infinite; }
+
+/* Slide-in animation */
+@keyframes slideIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+.slide-in { animation: slideIn 0.3s ease-out; }
+
+/* Fade in */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-in { animation: fadeIn 0.4s ease-out; }
+
+/* Shimmer loading */
+@keyframes shimmer {
+  0% { background-position: -200px 0; }
+  100% { background-position: 200px 0; }
+}
+.shimmer {
+  background: linear-gradient(90deg, var(--surface) 25%, var(--surface-2) 50%, var(--surface) 75%);
+  background-size: 400px 100%;
+  animation: shimmer 1.5s infinite;
+}
