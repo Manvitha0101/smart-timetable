@@ -27,7 +27,10 @@ export default function AssignmentsPage() {
   const [studyPlan, setStudyPlan] = useState<any[] | null>(null);
   const [planLoading, setPlanLoading] = useState(false);
   const [error, setError] = useState('');
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<{
+    title: string; subject: string; description: string;
+    due_date: string; priority: 'high' | 'medium' | 'low'; estimated_hours: number;
+  }>({
     title: '', subject: '', description: '',
     due_date: '', priority: 'medium', estimated_hours: 2,
   });

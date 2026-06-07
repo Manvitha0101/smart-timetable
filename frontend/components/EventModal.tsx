@@ -21,7 +21,7 @@ const EVENT_TYPES = [
   { value: 'study', label: ' Study', color: '#43D9AD' },
   { value: 'assignment', label: ' Assignment', color: '#FFB648' },
   { value: 'personal', label: ' Personal', color: '#A78BFA' },
-];
+] as const;
 
 const formatForInput = (isoStr?: string) => {
   if (!isoStr) return '';
@@ -31,7 +31,15 @@ const formatForInput = (isoStr?: string) => {
 export default function EventModal({
   isOpen, onClose, defaultStart, defaultEnd, editingEvent, onSave, onConflict,
 }: EventModalProps) {
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<{
+    title: string;
+    description: string;
+    start_time: string;
+    end_time: string;
+    event_type: 'class' | 'exam' | 'study' | 'assignment' | 'personal';
+    subject: string;
+    location: string;
+  }>({
     title: editingEvent?.title || '',
     description: editingEvent?.description || '',
     start_time: formatForInput(editingEvent?.start_time || defaultStart),
