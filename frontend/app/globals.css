@@ -2,25 +2,25 @@
 @import "tailwindcss";
 
 :root {
-  --primary: #6C63FF;
-  --primary-light: #8B85FF;
-  --primary-dark: #5A52E0;
-  --secondary: #FF6584;
-  --success: #43D9AD;
-  --warning: #FFB648;
-  --purple: #A78BFA;
-  --blue: #38BDF8;
-  --orange: #FB923C;
+  --primary: #A97B58;
+  --primary-light: #C29B7F;
+  --primary-dark: #8C6244;
+  --secondary: #D4A373;
+  --success: #606C38;
+  --warning: #DDA15E;
+  --purple: #B2967D;
+  --blue: #8CA1A5;
+  --orange: #E28F6B;
 
-  --bg: #0F0F1A;
-  --surface: #1A1A2E;
-  --surface-2: #1E1E35;
-  --surface-3: #252540;
-  --border: rgba(255, 255, 255, 0.08);
-  --border-active: rgba(108, 99, 255, 0.4);
-  --text: #E8E8F0;
-  --text-muted: #8888AA;
-  --text-dim: #5A5A7A;
+  --bg: #F5F0EA;
+  --surface: #FFFFFF;
+  --surface-2: #F8F5F1;
+  --surface-3: #EAE3D9;
+  --border: rgba(92, 77, 60, 0.12);
+  --border-active: rgba(169, 123, 88, 0.4);
+  --text: #4A3C31;
+  --text-muted: #8A7B6D;
+  --text-dim: #A89C8E;
 }
 
 * {
@@ -111,7 +111,7 @@ body {
 
 /* Glass card utility */
 .glass-card {
-  background: rgba(26, 26, 46, 0.8);
+  background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(20px);
   border: 1px solid var(--border);
   border-radius: 16px;

@@ -16,11 +16,11 @@ interface EventModalProps {
 }
 
 const EVENT_TYPES = [
-  { value: 'class', label: '📚 Class', color: '#6C63FF' },
-  { value: 'exam', label: '📝 Exam', color: '#FF6584' },
-  { value: 'study', label: '🧠 Study', color: '#43D9AD' },
-  { value: 'assignment', label: '📋 Assignment', color: '#FFB648' },
-  { value: 'personal', label: '👤 Personal', color: '#A78BFA' },
+  { value: 'class', label: ' Class', color: '#6C63FF' },
+  { value: 'exam', label: ' Exam', color: '#FF6584' },
+  { value: 'study', label: ' Study', color: '#43D9AD' },
+  { value: 'assignment', label: ' Assignment', color: '#FFB648' },
+  { value: 'personal', label: ' Personal', color: '#A78BFA' },
 ];
 
 const formatForInput = (isoStr?: string) => {

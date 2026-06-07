@@ -25,7 +25,7 @@ export default function ChatPanel() {
     {
       id: '0',
       role: 'assistant',
-      content: "👋 Hi! I'm **AcadeBot**, your AI scheduling assistant!\n\nI can help you:\n• 📅 View your schedule\n• 🔍 Find free time slots\n• 📚 Create study plans\n• ⚡ Detect conflicts\n• 📋 Track assignments\n\nWhat would you like to do?",
+      content: " Hi! I'm **AcadeBot**, your AI scheduling assistant!\n\nI can help you:\n•  View your schedule\n•  Find free time slots\n•  Create study plans\n•  Detect conflicts\n•  Track assignments\n\nWhat would you like to do?",
       timestamp: new Date(),
     },
   ]);
@@ -62,7 +62,7 @@ export default function ChatPanel() {
       const res = await chatApi.send(text);
       addBotMessage(res.data.reply);
     } catch {
-      addBotMessage('⚠️ Could not reach the backend. Make sure the FastAPI server is running on port 8000.');
+      addBotMessage('️ Could not reach the backend. Make sure the FastAPI server is running on port 8000.');
     } finally {
       setLoading(false);
     }

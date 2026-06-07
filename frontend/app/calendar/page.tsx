@@ -76,7 +76,7 @@ export default function CalendarPage() {
             background: 'rgba(255,101,132,0.1)', border: '1px solid rgba(255,101,132,0.3)',
             color: 'var(--secondary)', fontSize: 13,
           }}>
-            ⚠️ {error}
+            ️ {error}
           </div>
         )}
 
@@ -85,7 +85,7 @@ export default function CalendarPage() {
           {loading ? (
             <div style={{ height: 600, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: 32, marginBottom: 12 }}>📅</div>
+                <div style={{ fontSize: 32, marginBottom: 12 }}></div>
                 <div style={{ color: 'var(--text-muted)', fontSize: 14 }}>Loading your schedule...</div>
               </div>
             </div>

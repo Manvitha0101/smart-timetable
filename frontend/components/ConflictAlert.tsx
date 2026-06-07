@@ -45,7 +45,7 @@ export default function ConflictAlert({ conflict, onDismiss, onSelectSlot }: Con
             </div>
             <div>
               <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)' }}>
-                {isHard ? '⚡ Scheduling Conflict' : '⚠️ Tight Schedule'}
+                {isHard ? ' Scheduling Conflict' : '️ Tight Schedule'}
               </div>
               <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 1 }}>
                 {isHard ? 'Events overlap in time' : 'Less than 10 minutes between events'}
@@ -110,7 +110,7 @@ export default function ConflictAlert({ conflict, onDismiss, onSelectSlot }: Con
                   fontSize: 12, color: 'var(--success)', fontWeight: 500,
                 }}
               >
-                ✓ {s.label}
+                 {s.label}
               </button>
             ))}
           </div>

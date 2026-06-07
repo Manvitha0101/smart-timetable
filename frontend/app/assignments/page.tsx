@@ -8,7 +8,7 @@ import { BookOpen, Plus, Trash2, Check, Clock, AlertTriangle, Zap } from 'lucide
 import { format } from 'date-fns';
 
 const PRIORITY_CONFIG = {
-  high: { color: '#FF6584', bg: 'rgba(255,101,132,0.12)', label: '🔴 High' },
+  high: { color: '#FF6584', bg: 'rgba(255,101,132,0.12)', label: ' High' },
   medium: { color: '#FFB648', bg: 'rgba(255,182,72,0.12)', label: '🟡 Medium' },
   low: { color: '#43D9AD', bg: 'rgba(67,217,173,0.12)', label: '🟢 Low' },
 };
@@ -233,7 +233,7 @@ export default function AssignmentsPage() {
           </div>
         ) : assignments.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '60px 20px' }}>
-            <div style={{ fontSize: 48, marginBottom: 12 }}>🎉</div>
+            <div style={{ fontSize: 48, marginBottom: 12 }}></div>
             <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--text)', marginBottom: 6 }}>All clear!</div>
             <div style={{ color: 'var(--text-muted)' }}>No {filterStatus !== 'all' ? filterStatus : ''} assignments found.</div>
           </div>
@@ -256,12 +256,12 @@ export default function AssignmentsPage() {
                         <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 20, background: `${sCfg.color}22`, color: sCfg.color }}>{sCfg.label}</span>
                       </div>
                       <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
-                        <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>📖 {a.subject}</span>
+                        <span style={{ fontSize: 12, color: 'var(--text-muted)' }}> {a.subject}</span>
                         <span style={{ fontSize: 12, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 4 }}>
                           <Clock size={11} /> {a.estimated_hours}h estimated
                         </span>
                         <span style={{ fontSize: 12, fontWeight: 600, color: daysLeft <= 0 ? '#FF6584' : daysLeft <= 2 ? '#FF6584' : daysLeft <= 5 ? '#FFB648' : '#43D9AD' }}>
-                          {daysLeft <= 0 ? '🔴 OVERDUE' : daysLeft === 1 ? '🟡 Due tomorrow' : `⏰ Due in ${daysLeft}d (${format(new Date(a.due_date), 'MMM d')})`}
+                          {daysLeft <= 0 ? ' OVERDUE' : daysLeft === 1 ? '🟡 Due tomorrow' : ` Due in ${daysLeft}d (${format(new Date(a.due_date), 'MMM d')})`}
                         </span>
                       </div>
                       {a.description && <div style={{ fontSize: 12, color: 'var(--text-dim)', marginTop: 6, lineHeight: 1.4 }}>{a.description}</div>}
@@ -270,7 +270,7 @@ export default function AssignmentsPage() {
                       {a.status !== 'completed' && (
                         <button onClick={() => handleStatusUpdate(a.id, a.status === 'pending' ? 'in_progress' : 'completed')}
                           style={{ padding: '6px 12px', borderRadius: 8, border: 'none', background: 'rgba(67,217,173,0.15)', color: '#43D9AD', cursor: 'pointer', fontSize: 11, fontWeight: 700 }}>
-                          {a.status === 'pending' ? 'Start' : '✓ Done'}
+                          {a.status === 'pending' ? 'Start' : ' Done'}
                         </button>
                       )}
                       <button onClick={() => handleDelete(a.id)}

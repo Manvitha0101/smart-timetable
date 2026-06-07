@@ -118,7 +118,7 @@ export default function AnalyticsPage() {
                   </div>
                 </div>
                 <div style={{ fontSize: 13, fontWeight: 600, color: productivityColor }}>
-                  {(stats?.productivity_score ?? 0) >= 70 ? '🚀 Excellent!' : (stats?.productivity_score ?? 0) >= 40 ? '📈 Good Progress' : '⚡ Needs Improvement'}
+                  {(stats?.productivity_score ?? 0) >= 70 ? ' Excellent!' : (stats?.productivity_score ?? 0) >= 40 ? ' Good Progress' : ' Needs Improvement'}
                 </div>
                 <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 6 }}>
                   Busiest day: <strong style={{ color: 'var(--text)' }}>{stats?.busiest_day}</strong>

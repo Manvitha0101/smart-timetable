@@ -97,8 +97,8 @@ export default function SettingsPage() {
             <div>
               <p style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 12 }}>
                 {googleStatus.configured
-                  ? googleStatus.connected ? '✅ Connected' : 'Not connected'
-                  : '⚠️ Not configured — add Google OAuth credentials to backend .env'}
+                  ? googleStatus.connected ? ' Connected' : 'Not connected'
+                  : '️ Not configured — add Google OAuth credentials to backend .env'}
               </p>
               <div style={{ display: 'flex', gap: 10 }}>
                 {googleStatus.configured && !googleStatus.connected && (
@@ -122,8 +122,8 @@ export default function SettingsPage() {
           </h2>
           <p style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.6 }}>
             {reminderStatus?.email_configured
-              ? '✅ SMTP configured. Reminders are sent 1 day, 2 hours, and 30 minutes before events when you schedule them from the calendar.'
-              : '⚠️ Add SMTP_USER and SMTP_PASSWORD to backend .env to enable email reminders. The scheduler still runs and logs reminders in demo mode.'}
+              ? ' SMTP configured. Reminders are sent 1 day, 2 hours, and 30 minutes before events when you schedule them from the calendar.'
+              : '️ Add SMTP_USER and SMTP_PASSWORD to backend .env to enable email reminders. The scheduler still runs and logs reminders in demo mode.'}
           </p>
         </section>
       </main>

@@ -90,7 +90,7 @@ export default function DashboardPage() {
             </div>
             <div>
               <h1 style={{ fontSize: 26, fontWeight: 800, color: 'var(--text)' }}>
-                Good {getGreeting()}, {displayName}! 👋
+                Good {getGreeting()}, {displayName}! 
               </h1>
               <p style={{ fontSize: 14, color: 'var(--text-muted)' }}>
                 {format(new Date(), "EEEE, MMMM d, yyyy")} • Let's make today productive
@@ -145,7 +145,7 @@ export default function DashboardPage() {
               </div>
             ) : todayEvents.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '32px 16px' }}>
-                <div style={{ fontSize: 32, marginBottom: 8 }}>✨</div>
+                <div style={{ fontSize: 32, marginBottom: 8 }}></div>
                 <div style={{ color: 'var(--text-muted)', fontSize: 14 }}>No events today! Enjoy your free day.</div>
               </div>
             ) : (
@@ -178,7 +178,7 @@ export default function DashboardPage() {
                         </span>
                         {event.location && (
                           <span style={{ fontSize: 10, color: 'var(--text-dim)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                            📍 {event.location}
+                             {event.location}
                           </span>
                         )}
                       </div>
@@ -206,7 +206,7 @@ export default function DashboardPage() {
               </div>
             ) : assignments.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '32px 16px' }}>
-                <div style={{ fontSize: 32, marginBottom: 8 }}>🎉</div>
+                <div style={{ fontSize: 32, marginBottom: 8 }}></div>
                 <div style={{ color: 'var(--text-muted)', fontSize: 14 }}>All caught up! No pending assignments.</div>
               </div>
             ) : (
@@ -235,9 +235,9 @@ export default function DashboardPage() {
                         </span>
                       </div>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>📖 {a.subject}</span>
+                        <span style={{ fontSize: 11, color: 'var(--text-muted)' }}> {a.subject}</span>
                         <span style={{ fontSize: 11, fontWeight: 600, color: daysLeft <= 2 ? '#FF6584' : daysLeft <= 5 ? '#FFB648' : '#43D9AD' }}>
-                          {daysLeft === 0 ? '🔴 Due today!' : daysLeft === 1 ? '🟡 Due tomorrow' : `⏰ ${daysLeft}d left`}
+                          {daysLeft === 0 ? ' Due today!' : daysLeft === 1 ? '🟡 Due tomorrow' : ` ${daysLeft}d left`}
                         </span>
                       </div>
                     </div>
@@ -255,10 +255,10 @@ export default function DashboardPage() {
           </h2>
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
             {[
-              { label: '📅 Open Calendar', href: '/calendar', color: '#6C63FF' },
-              { label: '🤖 Ask AcadeBot', href: '/chat', color: '#A78BFA' },
-              { label: '📊 View Analytics', href: '/analytics', color: '#43D9AD' },
-              { label: '📋 Add Assignment', href: '/assignments', color: '#FFB648' },
+              { label: ' Open Calendar', href: '/calendar', color: '#6C63FF' },
+              { label: ' Ask AcadeBot', href: '/chat', color: '#A78BFA' },
+              { label: ' View Analytics', href: '/analytics', color: '#43D9AD' },
+              { label: ' Add Assignment', href: '/assignments', color: '#FFB648' },
             ].map(({ label, href, color }) => (
               <Link
                 key={href}

@@ -95,7 +95,7 @@ export default function CalendarView({ events, onEventChange }: CalendarViewProp
     return (
       <div style={{ height: 600, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: 32, marginBottom: 12 }}>📅</div>
+          <div style={{ fontSize: 32, marginBottom: 12 }}></div>
           <div style={{ color: 'var(--text-muted)', fontSize: 14 }}>Loading calendar...</div>
         </div>
       </div>

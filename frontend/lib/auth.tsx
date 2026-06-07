@@ -1,6 +1,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState, useCallback, ReactNode } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
 import { authApi, UserProfile, setAuthToken } from './api';
 
 interface AuthContextType {
@@ -19,6 +20,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
+  const pathname = usePathname();
 
   const refreshUser = useCallback(async () => {
     const stored = localStorage.getItem('access_token');
@@ -44,6 +47,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     refreshUser().finally(() => setLoading(false));
   }, [refreshUser]);
+
+  useEffect(() => {
+    if (!loading && !user && pathname !== '/login' && pathname !== '/register') {
+      router.push('/login');
+    }
+  }, [loading, user, pathname, router]);
 
   const login = async (email: string, password: string) => {
     const res = await authApi.login({ email, password });
