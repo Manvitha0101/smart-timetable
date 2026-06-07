@@ -28,7 +28,13 @@ export default function RegisterPage() {
       router.push('/');
     } catch (err: any) {
       const detail = err?.response?.data?.detail;
-      setError(typeof detail === 'string' ? detail : 'Registration failed. Check your details.');
+      if (typeof detail === 'string') {
+        setError(detail);
+      } else if (Array.isArray(detail) && detail.length > 0 && detail[0].msg) {
+        setError(detail[0].msg.replace('Value error, ', ''));
+      } else {
+        setError('Registration failed. Check your details.');
+      }
     } finally {
       setLoading(false);
     }
