@@ -72,7 +72,7 @@ app.include_router(reminders.router)
 app.include_router(google_calendar.router)
 
 
-@app.get("/")
+@app.api_route("/", methods=["GET", "HEAD"])
 async def root():
     return {
         "app": "Smart Timetable Assistant",
@@ -83,7 +83,7 @@ async def root():
     }
 
 
-@app.get("/health")
+@app.api_route("/health", methods=["GET", "HEAD"])
 async def health():
     return {"status": "healthy"}
 
