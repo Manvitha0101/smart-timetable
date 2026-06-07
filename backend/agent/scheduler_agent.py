@@ -5,7 +5,7 @@ Uses Google Gemini Pro (free) with custom scheduling tools.
 
 import os
 from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain_classic.agents import AgentExecutor, create_tool_calling_agent
+from langchain.agents import AgentExecutor, create_tool_calling_agent
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.messages import HumanMessage, AIMessage
 from sqlalchemy.ext.asyncio import AsyncSession
