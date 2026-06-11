@@ -9,9 +9,7 @@ from .tools import get_tools
 
 try:
     from langchain_google_genai import ChatGoogleGenerativeAI
-    from langchain.agents import AgentExecutor, create_tool_calling_agent
-    from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-    from langchain_core.messages import HumanMessage, AIMessage
+    from langgraph.prebuilt import create_react_agent
     LANGCHAIN_AVAILABLE = True
 except ImportError:
     LANGCHAIN_AVAILABLE = False
@@ -64,23 +62,8 @@ def create_agent(db: AsyncSession, user_id: str):
     from zoneinfo import ZoneInfo
     current_dt = datetime.now(ZoneInfo("Asia/Kolkata")).strftime("%A, %B %d %Y at %I:%M %p IST")
 
-    prompt = ChatPromptTemplate.from_messages([
-        ("system", SYSTEM_PROMPT.format(current_datetime=current_dt)),
-        MessagesPlaceholder("chat_history", optional=True),
-        ("human", "{input}"),
-        MessagesPlaceholder("agent_scratchpad"),
-    ])
-
-    agent = create_tool_calling_agent(llm, tools, prompt)
-    executor = AgentExecutor(
-        agent=agent,
-        tools=tools,
-        verbose=False,
-        max_iterations=5,
-        handle_parsing_errors=True,
-        return_intermediate_steps=True,
-    )
-    return executor
+    agent = create_react_agent(llm, tools, state_modifier=SYSTEM_PROMPT.format(current_datetime=current_dt))
+    return agent
 
 
 DEMO_RESPONSES = {
