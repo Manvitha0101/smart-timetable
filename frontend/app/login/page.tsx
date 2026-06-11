@@ -22,7 +22,11 @@ export default function LoginPage() {
       await login(email, password);
       router.push('/');
     } catch (err: any) {
-      setError(err?.response?.data?.detail || 'Login failed. Check your credentials.');
+      if (!err.response) {
+        setError(`Network error: Could not connect to backend. Is NEXT_PUBLIC_API_URL set? (${err.message})`);
+      } else {
+        setError(err.response?.data?.detail || 'Login failed. Check your credentials.');
+      }
     } finally {
       setLoading(false);
     }
@@ -32,7 +36,7 @@ export default function LoginPage() {
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
       <div className="glass-card" style={{ width: '100%', maxWidth: 420, padding: 36 }}>
         <div style={{ textAlign: 'center', marginBottom: 28 }}>
-          <div style={{ width: 52, height: 52, borderRadius: 14, background: 'linear-gradient(135deg, #6C63FF, #A78BFA)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>
+          <div style={{ width: 52, height: 52, borderRadius: 14, background: 'linear-gradient(135deg, var(--primary), var(--secondary))', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>
             <GraduationCap size={26} color="white" />
           </div>
           <h1 style={{ fontSize: 22, fontWeight: 800, color: 'var(--text)' }}>Welcome back</h1>
@@ -66,7 +70,7 @@ const inputStyle: React.CSSProperties = {
 };
 const btnStyle: React.CSSProperties = {
   padding: '12px 20px', borderRadius: 10, border: 'none',
-  background: 'linear-gradient(135deg, #6C63FF, #A78BFA)',
+  background: 'linear-gradient(135deg, var(--primary), var(--secondary))',
   color: 'white', fontWeight: 700, fontSize: 14, cursor: 'pointer',
   display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
 };

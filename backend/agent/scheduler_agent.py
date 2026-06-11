@@ -4,12 +4,17 @@ Uses Google Gemini Pro (free) with custom scheduling tools.
 """
 
 import os
-from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain.agents import AgentExecutor, create_tool_calling_agent
-from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain_core.messages import HumanMessage, AIMessage
 from sqlalchemy.ext.asyncio import AsyncSession
 from .tools import get_tools
+
+try:
+    from langchain_google_genai import ChatGoogleGenerativeAI
+    from langchain.agents import AgentExecutor, create_tool_calling_agent
+    from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+    from langchain_core.messages import HumanMessage, AIMessage
+    LANGCHAIN_AVAILABLE = True
+except ImportError:
+    LANGCHAIN_AVAILABLE = False
 
 
 SYSTEM_PROMPT = """You are AcadeBot, an intelligent academic scheduling assistant for students.
@@ -38,11 +43,11 @@ Today's date/time: {current_datetime}
 """
 
 
-def create_agent(db: AsyncSession, user_id: str) -> AgentExecutor:
+def create_agent(db: AsyncSession, user_id: str):
     """Create and return the LangChain scheduling agent."""
     api_key = os.getenv("GEMINI_API_KEY", "")
 
-    if not api_key or api_key == "your_gemini_api_key_here":
+    if not api_key or api_key == "your_gemini_api_key_here" or not LANGCHAIN_AVAILABLE:
         # Fallback to a mock response agent for demo mode
         return None
 

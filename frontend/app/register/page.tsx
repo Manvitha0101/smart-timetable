@@ -27,13 +27,17 @@ export default function RegisterPage() {
       });
       router.push('/');
     } catch (err: any) {
-      const detail = err?.response?.data?.detail;
-      if (typeof detail === 'string') {
-        setError(detail);
-      } else if (Array.isArray(detail) && detail.length > 0 && detail[0].msg) {
-        setError(detail[0].msg.replace('Value error, ', ''));
+      if (!err.response) {
+        setError(`Network error: Could not connect to backend. Is NEXT_PUBLIC_API_URL set? (${err.message})`);
       } else {
-        setError('Registration failed. Check your details.');
+        const detail = err.response?.data?.detail;
+        if (typeof detail === 'string') {
+          setError(detail);
+        } else if (Array.isArray(detail) && detail.length > 0 && detail[0].msg) {
+          setError(detail[0].msg.replace('Value error, ', ''));
+        } else {
+          setError('Registration failed. Check your details.');
+        }
       }
     } finally {
       setLoading(false);
@@ -44,7 +48,7 @@ export default function RegisterPage() {
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
       <div className="glass-card" style={{ width: '100%', maxWidth: 460, padding: 36 }}>
         <div style={{ textAlign: 'center', marginBottom: 28 }}>
-          <div style={{ width: 52, height: 52, borderRadius: 14, background: 'linear-gradient(135deg, #6C63FF, #A78BFA)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>
+          <div style={{ width: 52, height: 52, borderRadius: 14, background: 'linear-gradient(135deg, var(--primary), var(--secondary))', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>
             <GraduationCap size={26} color="white" />
           </div>
           <h1 style={{ fontSize: 22, fontWeight: 800, color: 'var(--text)' }}>Create account</h1>
@@ -80,7 +84,7 @@ const inputStyle: React.CSSProperties = {
 };
 const btnStyle: React.CSSProperties = {
   padding: '12px 20px', borderRadius: 10, border: 'none',
-  background: 'linear-gradient(135deg, #6C63FF, #A78BFA)',
+  background: 'linear-gradient(135deg, var(--primary), var(--secondary))',
   color: 'white', fontWeight: 700, fontSize: 14, cursor: 'pointer',
   display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
 };

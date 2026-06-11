@@ -82,8 +82,8 @@ async def register(
         value=raw_refresh,
         httponly=True,
         max_age=REFRESH_TOKEN_EXPIRE_DAYS * 86400,
-        samesite="lax",
-        secure=False,  # set to True in production with HTTPS
+        samesite="none",
+        secure=True,
     )
 
     return TokenResponse(access_token=access_token, user=UserResponse.model_validate(user))
@@ -130,8 +130,8 @@ async def login(
         value=raw_refresh,
         httponly=True,
         max_age=REFRESH_TOKEN_EXPIRE_DAYS * 86400,
-        samesite="lax",
-        secure=False,
+        samesite="none",
+        secure=True,
     )
 
     return TokenResponse(access_token=access_token, user=UserResponse.model_validate(user))
@@ -158,7 +158,11 @@ async def logout(
             rt.is_revoked = True
             await db.commit()
 
-    response.delete_cookie("refresh_token")
+    response.delete_cookie(
+        "refresh_token",
+        samesite="none",
+        secure=True,
+    )
     return {"message": "Logged out successfully."}
 
 
@@ -208,8 +212,8 @@ async def refresh_token_endpoint(
         value=raw_new_refresh,
         httponly=True,
         max_age=REFRESH_TOKEN_EXPIRE_DAYS * 86400,
-        samesite="lax",
-        secure=False,
+        samesite="none",
+        secure=True,
     )
 
     return TokenResponse(access_token=new_access, user=UserResponse.model_validate(user))
