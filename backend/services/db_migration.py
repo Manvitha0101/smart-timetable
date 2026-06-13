@@ -86,7 +86,7 @@ async def run_migrations(engine: AsyncEngine) -> str:
                     "inst": "Smart Timetable University",
                     "sem": "Semester 4",
                     "color": "#6C63FF",
-                    "now": datetime.utcnow().isoformat(),
+                    "now": datetime.utcnow(),
                 },
             )
 
