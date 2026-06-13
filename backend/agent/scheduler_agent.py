@@ -45,7 +45,7 @@ def create_agent(db: AsyncSession, user_id: str):
     """Create and return the LangChain scheduling agent."""
     api_key = os.getenv("GEMINI_API_KEY", "")
 
-    if not api_key or api_key == "your_gemini_api_key_here" or not LANGCHAIN_AVAILABLE:
+    if not api_key or api_key == "your_gemini_api_key_here" or api_key == "PASTE_YOUR_AIza_KEY_HERE" or not LANGCHAIN_AVAILABLE:
         # Fallback to a mock response agent for demo mode
         return None
 
