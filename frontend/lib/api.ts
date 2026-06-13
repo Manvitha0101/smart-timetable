@@ -94,6 +94,9 @@ export const authApi = {
   googleAuth: (credential: string) =>
     api.post<{ access_token: string; user: UserProfile }>('/auth/google', { credential }),
 
+  refresh: () =>
+    api.post<{ access_token: string; user: UserProfile }>('/auth/refresh'),
+
   getMe: () => api.get<UserProfile>('/auth/me'),
 
   updateMe: (data: Partial<{ name: string; institution: string; semester: string }>) =>

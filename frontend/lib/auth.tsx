@@ -24,24 +24,48 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
 
+  const applyTokenAndUser = (accessToken: string, profile: UserProfile) => {
+    localStorage.setItem('access_token', accessToken);
+    setAuthToken(accessToken);
+    setToken(accessToken);
+    setUser(profile);
+  };
+
+  const clearAuth = () => {
+    localStorage.removeItem('access_token');
+    setAuthToken(null);
+    setToken(null);
+    setUser(null);
+  };
+
   const refreshUser = useCallback(async () => {
     const stored = localStorage.getItem('access_token');
-    if (!stored) {
-      setUser(null);
-      setToken(null);
-      setAuthToken(null);
-      return;
+
+    if (stored) {
+      // Try using the existing token first
+      setAuthToken(stored);
+      try {
+        const res = await authApi.getMe();
+        setToken(stored);
+        setUser(res.data);
+        return; // ✅ token still valid
+      } catch (err: any) {
+        // Token expired (401) → fall through to refresh
+        if (err?.response?.status !== 401) {
+          // Network error or other — keep user logged in, don't clear
+          setToken(stored);
+          return;
+        }
+      }
     }
-    setAuthToken(stored);
-    setToken(stored);
+
+    // Token missing or expired → try refresh token cookie
     try {
-      const res = await authApi.getMe();
-      setUser(res.data);
+      const res = await authApi.refresh();
+      applyTokenAndUser(res.data.access_token, res.data.user);
     } catch {
-      localStorage.removeItem('access_token');
-      setUser(null);
-      setToken(null);
-      setAuthToken(null);
+      // Refresh also failed → truly logged out
+      clearAuth();
     }
   }, []);
 
@@ -57,36 +81,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (email: string, password: string) => {
     const res = await authApi.login({ email, password });
-    localStorage.setItem('access_token', res.data.access_token);
-    setAuthToken(res.data.access_token);
-    setToken(res.data.access_token);
-    setUser(res.data.user);
+    applyTokenAndUser(res.data.access_token, res.data.user);
   };
 
   const loginWithGoogle = async (credential: string) => {
     const res = await authApi.googleAuth(credential);
-    localStorage.setItem('access_token', res.data.access_token);
-    setAuthToken(res.data.access_token);
-    setToken(res.data.access_token);
-    setUser(res.data.user);
+    applyTokenAndUser(res.data.access_token, res.data.user);
   };
 
   const register = async (data: { email: string; password: string; name: string; institution?: string; semester?: string }) => {
     const res = await authApi.register(data);
-    localStorage.setItem('access_token', res.data.access_token);
-    setAuthToken(res.data.access_token);
-    setToken(res.data.access_token);
-    setUser(res.data.user);
+    applyTokenAndUser(res.data.access_token, res.data.user);
   };
 
   const logout = async () => {
     try {
       if (token) await authApi.logout();
     } catch {}
-    localStorage.removeItem('access_token');
-    setAuthToken(null);
-    setToken(null);
-    setUser(null);
+    clearAuth();
   };
 
   return (
