@@ -1,17 +1,21 @@
 """
 Auth Router
 Endpoints: /auth/register, /auth/login, /auth/logout,
-           /auth/me, /auth/me (PUT), /auth/refresh, /auth/change-password
+           /auth/me, /auth/me (PUT), /auth/refresh, /auth/change-password,
+           /auth/google
 """
 
+import os
 import uuid
 import hashlib
 from datetime import datetime, timedelta
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Response, Request, status, Cookie
+from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from pydantic import BaseModel
 
 from models.database import User, RefreshToken, get_db
 from models.schemas import (
@@ -26,6 +30,10 @@ from services.auth_service import (
 )
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
+
+
+class GoogleAuthRequest(BaseModel):
+    credential: str  # Google ID token from frontend
 
 AVATAR_COLORS = [
     "#6C63FF", "#FF6584", "#43D9AD", "#FFB648",
@@ -263,3 +271,85 @@ async def change_password(
     current_user.hashed_password = hash_password(body.new_password)
     await db.commit()
     return {"message": "Password updated successfully."}
+
+
+# ─── Google OAuth ─────────────────────────────────────────────────────────────
+@router.post("/google", response_model=TokenResponse)
+async def google_auth(
+    body: GoogleAuthRequest,
+    response: Response,
+    db: AsyncSession = Depends(get_db),
+):
+    """Verify a Google ID token and create/login the user."""
+    try:
+        from google.oauth2 import id_token
+        from google.auth.transport import requests as google_requests
+
+        GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
+        if not GOOGLE_CLIENT_ID:
+            raise HTTPException(status_code=500, detail="Google OAuth not configured.")
+
+        idinfo = id_token.verify_oauth2_token(
+            body.credential,
+            google_requests.Request(),
+            GOOGLE_CLIENT_ID,
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=401, detail=f"Invalid Google token: {str(e)}")
+
+    email = idinfo.get("email", "").lower().strip()
+    name = idinfo.get("name", email.split("@")[0])
+    google_id = idinfo.get("sub", "")
+
+    if not email:
+        raise HTTPException(status_code=400, detail="No email returned from Google.")
+
+    # Find or create user
+    result = await db.execute(select(User).where(User.email == email))
+    user = result.scalar_one_or_none()
+
+    if not user:
+        color = AVATAR_COLORS[sum(ord(c) for c in email) % len(AVATAR_COLORS)]
+        user = User(
+            id=str(uuid.uuid4()),
+            email=email,
+            name=name,
+            hashed_password=hash_password(google_id + "google-oauth"),  # unusable password
+            institution=None,
+            semester=None,
+            avatar_color=color,
+            created_at=datetime.utcnow(),
+        )
+        db.add(user)
+        await db.commit()
+        await db.refresh(user)
+    elif not user.is_active:
+        raise HTTPException(status_code=403, detail="Account is deactivated. Contact support.")
+
+    # Update last login
+    user.last_login = datetime.utcnow()
+    await db.commit()
+
+    # Issue tokens
+    access_token = create_access_token(user.id, user.email, user.name)
+    raw_refresh, refresh_hash = create_refresh_token(user.id)
+
+    rt = RefreshToken(
+        id=str(uuid.uuid4()),
+        user_id=user.id,
+        token_hash=refresh_hash,
+        expires_at=datetime.utcnow() + timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS),
+    )
+    db.add(rt)
+    await db.commit()
+
+    response.set_cookie(
+        key="refresh_token",
+        value=raw_refresh,
+        httponly=True,
+        max_age=REFRESH_TOKEN_EXPIRE_DAYS * 86400,
+        samesite="none",
+        secure=True,
+    )
+
+    return TokenResponse(access_token=access_token, user=UserResponse.model_validate(user))

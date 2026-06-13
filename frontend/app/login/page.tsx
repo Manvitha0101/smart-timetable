@@ -5,9 +5,10 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { GraduationCap, LogIn } from 'lucide-react';
 import { useAuth } from '@/lib/auth';
+import { GoogleLogin } from '@react-oauth/google';
 
 export default function LoginPage() {
-  const { login } = useAuth();
+  const { login, loginWithGoogle } = useAuth();
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -19,14 +20,29 @@ export default function LoginPage() {
     setError('');
     setLoading(true);
     try {
-      await login(email, password);
+      await login(email.toLowerCase().trim(), password);
       router.push('/');
     } catch (err: any) {
       if (!err.response) {
-        setError(`Network error: Could not connect to backend. Is NEXT_PUBLIC_API_URL set? (${err.message})`);
+        setError(`Network error: Could not connect to the server. Please try again.`);
       } else {
-        setError(err.response?.data?.detail || 'Login failed. Check your credentials.');
+        const detail = err.response?.data?.detail;
+        setError(typeof detail === 'string' ? detail : 'Incorrect email or password.');
       }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleSuccess = async (credentialResponse: any) => {
+    setError('');
+    setLoading(true);
+    try {
+      await loginWithGoogle(credentialResponse.credential);
+      router.push('/');
+    } catch (err: any) {
+      const detail = err.response?.data?.detail;
+      setError(typeof detail === 'string' ? detail : 'Google sign-in failed. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -43,9 +59,43 @@ export default function LoginPage() {
           <p style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 6 }}>Sign in to your Smart Timetable account</p>
         </div>
 
+        {/* Google Sign-In */}
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
+          <GoogleLogin
+            onSuccess={handleGoogleSuccess}
+            onError={() => setError('Google sign-in failed. Please try again.')}
+            theme="filled_black"
+            shape="rectangular"
+            size="large"
+            width="348"
+            text="signin_with"
+          />
+        </div>
+
+        {/* Divider */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
+          <div style={{ flex: 1, height: 1, background: 'var(--border)' }} />
+          <span style={{ fontSize: 12, color: 'var(--text-dim)', whiteSpace: 'nowrap' }}>or sign in with email</span>
+          <div style={{ flex: 1, height: 1, background: 'var(--border)' }} />
+        </div>
+
         <form onSubmit={handleSubmit}>
-          <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required style={inputStyle} />
-          <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required style={{ ...inputStyle, marginTop: 12 }} />
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            style={inputStyle}
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            style={{ ...inputStyle, marginTop: 12 }}
+          />
           {error && <p style={{ color: '#FF6584', fontSize: 12, marginTop: 10 }}>{error}</p>}
           <button type="submit" disabled={loading} style={{ ...btnStyle, marginTop: 20, width: '100%' }}>
             <LogIn size={16} /> {loading ? 'Signing in...' : 'Sign In'}
@@ -54,9 +104,6 @@ export default function LoginPage() {
 
         <p style={{ textAlign: 'center', fontSize: 13, color: 'var(--text-muted)', marginTop: 20 }}>
           No account? <Link href="/register" style={{ color: 'var(--primary)', fontWeight: 600 }}>Create one</Link>
-        </p>
-        <p style={{ textAlign: 'center', fontSize: 12, color: 'var(--text-dim)', marginTop: 12 }}>
-          Or <Link href="/" style={{ color: 'var(--text-muted)' }}>continue as demo user</Link>
         </p>
       </div>
     </div>

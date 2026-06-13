@@ -91,6 +91,9 @@ export const authApi = {
 
   logout: () => api.post('/auth/logout'),
 
+  googleAuth: (credential: string) =>
+    api.post<{ access_token: string; user: UserProfile }>('/auth/google', { credential }),
+
   getMe: () => api.get<UserProfile>('/auth/me'),
 
   updateMe: (data: Partial<{ name: string; institution: string; semester: string }>) =>

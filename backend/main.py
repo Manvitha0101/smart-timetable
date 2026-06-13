@@ -59,13 +59,19 @@ origins = [
     "http://localhost:3000",
     "http://localhost:3001",
     frontend_url,
-    frontend_url.rstrip("/")
+    frontend_url.rstrip("/"),
 ]
-origins = list(set(origins))
+
+# Dynamically allow any Render/Vercel deploy previews
+allowed_origin_patterns = [
+    "onrender.com",
+    "vercel.app",
+]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=list(set(origins)),
+    allow_origin_regex=r"https?://.*\.(onrender\.com|vercel\.app|localhost)(:\d+)?",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
