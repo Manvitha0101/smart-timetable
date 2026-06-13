@@ -6,7 +6,17 @@ import os
 
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite+aiosqlite:///./smart_timetable.db")
 
-engine = create_async_engine(DATABASE_URL, echo=False)
+# Render PostgreSQL gives postgres:// — convert to asyncpg format
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql+asyncpg://", 1)
+elif DATABASE_URL.startswith("postgresql://") and "asyncpg" not in DATABASE_URL:
+    DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://", 1)
+
+# SQLite needs check_same_thread=False; PostgreSQL doesn't
+is_sqlite = "sqlite" in DATABASE_URL
+connect_args = {"check_same_thread": False} if is_sqlite else {}
+
+engine = create_async_engine(DATABASE_URL, echo=False, connect_args=connect_args)
 AsyncSessionLocal = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
 

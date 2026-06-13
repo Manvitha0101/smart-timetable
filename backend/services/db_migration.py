@@ -1,6 +1,6 @@
 """
-Database migration helper for SQLite schema upgrades.
-Adds auth tables and user_id columns to existing databases.
+Database migration helper — works for both SQLite and PostgreSQL.
+Creates tables and seeds the demo user on startup.
 """
 
 import uuid
@@ -17,35 +17,55 @@ DEMO_USER_EMAIL = "demo@smarttimetable.local"
 
 
 async def _table_exists(conn, table: str) -> bool:
-    result = await conn.execute(
-        text("SELECT name FROM sqlite_master WHERE type='table' AND name=:t"),
-        {"t": table},
-    )
-    return result.fetchone() is not None
+    """Works for both SQLite and PostgreSQL."""
+    try:
+        # PostgreSQL
+        result = await conn.execute(
+            text("SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = :t)"),
+            {"t": table},
+        )
+        return result.scalar()
+    except Exception:
+        # SQLite fallback
+        result = await conn.execute(
+            text("SELECT name FROM sqlite_master WHERE type='table' AND name=:t"),
+            {"t": table},
+        )
+        return result.fetchone() is not None
 
 
 async def _column_exists(conn, table: str, column: str) -> bool:
-    result = await conn.execute(text(f"PRAGMA table_info({table})"))
-    return any(row[1] == column for row in result.fetchall())
+    """Works for both SQLite and PostgreSQL."""
+    try:
+        # PostgreSQL
+        result = await conn.execute(
+            text("""
+                SELECT EXISTS (
+                    SELECT FROM information_schema.columns
+                    WHERE table_name = :t AND column_name = :c
+                )
+            """),
+            {"t": table, "c": column},
+        )
+        return result.scalar()
+    except Exception:
+        # SQLite fallback
+        result = await conn.execute(text(f"PRAGMA table_info({table})"))
+        return any(row[1] == column for row in result.fetchall())
 
 
 async def run_migrations(engine: AsyncEngine) -> str:
     """Apply schema migrations and ensure demo user exists. Returns demo user id."""
     async with engine.begin() as conn:
+        # Create all tables (safe — skips existing tables)
         await conn.run_sync(Base.metadata.create_all)
 
-        if not await _table_exists(conn, "users"):
-            pass  # create_all handles new tables
+        # Add user_id columns to old tables if missing
+        for table in ("events", "assignments", "user_preferences"):
+            if await _table_exists(conn, table) and not await _column_exists(conn, table, "user_id"):
+                await conn.execute(text(f"ALTER TABLE {table} ADD COLUMN user_id VARCHAR(36)"))
 
-        if await _table_exists(conn, "events") and not await _column_exists(conn, "events", "user_id"):
-            await conn.execute(text("ALTER TABLE events ADD COLUMN user_id VARCHAR(36)"))
-
-        if await _table_exists(conn, "assignments") and not await _column_exists(conn, "assignments", "user_id"):
-            await conn.execute(text("ALTER TABLE assignments ADD COLUMN user_id VARCHAR(36)"))
-
-        if await _table_exists(conn, "user_preferences") and not await _column_exists(conn, "user_preferences", "user_id"):
-            await conn.execute(text("ALTER TABLE user_preferences ADD COLUMN user_id VARCHAR(36)"))
-
+    # Ensure demo user exists
     async with engine.begin() as conn:
         result = await conn.execute(
             text("SELECT id FROM users WHERE id = :id"),
@@ -56,7 +76,7 @@ async def run_migrations(engine: AsyncEngine) -> str:
                 text(
                     """INSERT INTO users (id, email, name, hashed_password, institution, semester,
                        avatar_color, is_active, is_demo, created_at, last_login)
-                       VALUES (:id, :email, :name, :pw, :inst, :sem, :color, 1, 1, :now, NULL)"""
+                       VALUES (:id, :email, :name, :pw, :inst, :sem, :color, TRUE, TRUE, :now, NULL)"""
                 ),
                 {
                     "id": DEMO_USER_ID,
@@ -70,6 +90,7 @@ async def run_migrations(engine: AsyncEngine) -> str:
                 },
             )
 
+        # Assign orphan events/assignments to demo user
         for table in ("events", "assignments"):
             if await _table_exists(conn, table) and await _column_exists(conn, table, "user_id"):
                 await conn.execute(

@@ -9,7 +9,6 @@ import {
   BarChart3,
   MessageSquareText,
   GraduationCap,
-  Zap,
   Settings,
   LogIn,
 } from 'lucide-react';
@@ -136,10 +135,6 @@ export default function Sidebar() {
             <LogIn size={14} /> Sign in / Register
           </Link>
         )}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 10 }}>
-          <Zap size={12} color="var(--warning)" />
-          <span style={{ fontSize: 10, color: 'var(--text-dim)' }}>Add GEMINI_API_KEY for full AI</span>
-        </div>
       </div>
     </aside>
   );
